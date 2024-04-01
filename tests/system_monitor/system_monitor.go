@@ -6,6 +6,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -140,7 +141,19 @@ func main() {
 		// 交换分区
 		swapmem, _ := mem.SwapMemory()
 		swap_used_percent := swapmem.UsedPercent
-		logrus.Infof("swap memory usage: %.2f%%\n", swap_used_percent)
-		time.Sleep(1 * time.Second)
+		logrus.Debugf("swap memory usage: %.2f%%\n", swap_used_percent)
+		// 空闲内存低于指定值执行shell
+		free_mb := BytesToMB(vmem.Free)
+		if free_mb < 256 {
+			cmd := "ps aux | grep \".vscode-server\" | awk '{print $2}' | xargs kill -9"
+			logrus.Infof("free memory is low: free=%d, run_cmd=%s", free_mb, cmd)
+			output, err := exec.Command("bash", "-c", cmd).Output()
+			if err != nil {
+				logrus.Info("run cmd faild: %s", output)
+			} else {
+				logrus.Info("run result: %s", output)
+			}
+		}
+		time.Sleep(9 * time.Second)
 	}
 }
