@@ -15,7 +15,6 @@ import (
 	"github.com/rifflock/lfshook"
 	"github.com/shirou/gopsutil/mem"
 	"github.com/sirupsen/logrus"
-	"github.com/sirupsen/logrus/hooks/writer"
 )
 
 type CustomFormatter struct {
@@ -50,8 +49,8 @@ func (f *CustomFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 
 func SetupLog() {
 	// 创建日志记录器
-	logrus.SetLevel(logrus.DebugLevel)
 	logger := logrus.StandardLogger() // logrus.New()
+	logger.SetLevel(logrus.DebugLevel)
 	// // 设置日志级别
 	// logger.SetLevel(logrus.DebugLevel)
 	//logger.SetFormatter(&CustomFormatter{})
@@ -65,13 +64,14 @@ func SetupLog() {
 	})
 	logger.SetReportCaller(true)
 
-	// 添加控制台输出
-	consoleWriter := os.Stdout
-	consoleHook := &writer.Hook{ // 控制台输出
-		Writer:    consoleWriter,
-		LogLevels: []logrus.Level{logrus.DebugLevel, logrus.InfoLevel, logrus.WarnLevel, logrus.ErrorLevel, logrus.FatalLevel, logrus.PanicLevel},
-	}
-	logger.AddHook(consoleHook)
+	logger.SetOutput(os.Stdout)
+	// // 添加控制台输出hook，如果默认就已经有控制台输出了，这里反而重复添加
+	// consoleWriter := os.Stdout
+	// consoleHook := &writer.Hook{ // 控制台输出
+	// 	Writer:    consoleWriter,
+	// 	LogLevels: []logrus.Level{logrus.DebugLevel, logrus.InfoLevel, logrus.WarnLevel, logrus.ErrorLevel, logrus.FatalLevel, logrus.PanicLevel},
+	// }
+	// logger.AddHook(consoleHook)
 
 	// 获取进程名
 	process_name := filepath.Base(os.Args[0])
