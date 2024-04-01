@@ -145,9 +145,11 @@ func main() {
 		logrus.Debugf("swap memory usage: %.2f%%\n", swap_used_percent)
 		// 空闲内存低于指定值执行shell
 		free_mb := BytesToMB(vmem.Free)
-		if free_mb < 256 {
+		// 剩余可用内存
+		available_mb := BytesToMB(vmem.Available)
+		if available_mb < 50 {
 			cmd := "ps aux | grep \".vscode-server\" | awk '{print $2}' | xargs kill -9"
-			logrus.Infof("free memory is low: free=%d, run_cmd=%s", free_mb, cmd)
+			logrus.Infof("free memory is low: free=%.2f,available=%.2f, run_cmd=%s", free_mb, available_mb, cmd)
 			output, err := exec.Command("bash", "-c", cmd).Output()
 			if err != nil {
 				logrus.Info("run cmd faild: %s", output)
