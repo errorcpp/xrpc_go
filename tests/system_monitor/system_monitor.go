@@ -1,5 +1,6 @@
 /// @coding utf-8
 /// @author errorcpp@qq.com
+///   nohup command > /dev/null 2>&1 &  # 无任何重定向
 
 package main
 
