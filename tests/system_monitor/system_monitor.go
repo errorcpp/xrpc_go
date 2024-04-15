@@ -147,7 +147,7 @@ func main() {
 		free_mb := BytesToMB(vmem.Free)
 		// 剩余可用内存
 		available_mb := BytesToMB(vmem.Available)
-		if available_mb < 50 {
+		if available_mb < 500 {
 			cmd := "ps aux | grep \".vscode-server\" | awk '{print $2}' | xargs kill -9"
 			logrus.Infof("free memory is low: free=%.2f,available=%.2f, run_cmd=%s", free_mb, available_mb, cmd)
 			output, err := exec.Command("bash", "-c", cmd).Output()
